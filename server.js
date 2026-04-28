@@ -428,14 +428,26 @@ function isLikelyXtreamPayload(payload) {
 }
 
 function buildProviderHttpError(status, finalUrl, bodyText) {
-  const compactBody = String(bodyText || "")
+  const rawBody = String(bodyText || "");
+  const compactBody = rawBody
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, 180);
+  const lowerBody = rawBody.toLowerCase();
+  const looksLikeGatewayBlock =
+    status === 403 &&
+    (lowerBody.includes("<html") ||
+      lowerBody.includes("forbidden") ||
+      lowerBody.includes("nginx") ||
+      lowerBody.includes("cloudflare"));
 
   const hints = [];
   if (status === 401 || status === 403) {
     hints.push("confirma username/password");
+  }
+  if (looksLikeGatewayBlock) {
+    hints.push("o provider pode estar a bloquear IPs de cloud/VPS como Render");
+    hints.push("pede whitelist do IP de saida do teu servico no Render");
   }
   if (status === 404 || status === 512) {
     hints.push("experimenta colar apenas o host base, por exemplo http://servidor:porta");
