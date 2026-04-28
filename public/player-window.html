@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Player Externo | Carlos Ramos</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.19/dist/hls.min.js" defer></script>
+    <script src="/player-window.js" defer></script>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #05080d;
+        --panel: rgba(12, 16, 23, 0.84);
+        --line: rgba(255, 255, 255, 0.12);
+        --text: #f7f8fa;
+        --soft: rgba(247, 248, 250, 0.72);
+        --accent: #d9a657;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #05080d;
+        color: var(--text);
+        font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      }
+
+      body {
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      .window-header {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.9rem 1rem;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(18px);
+      }
+
+      .window-copy h1,
+      .window-copy p {
+        margin: 0;
+      }
+
+      .window-copy h1 {
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .window-copy p {
+        color: var(--soft);
+        font-size: 0.82rem;
+        margin-top: 0.22rem;
+      }
+
+      .window-actions {
+        display: flex;
+        gap: 0.65rem;
+      }
+
+      .window-actions button {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        padding: 0.7rem 0.95rem;
+        cursor: pointer;
+      }
+
+      .window-stage {
+        position: relative;
+        min-height: 0;
+        background:
+          linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.65)),
+          center / cover no-repeat;
+      }
+
+      video {
+        width: 100%;
+        height: 100%;
+        display: block;
+        background: #000;
+      }
+
+      .window-empty {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 1rem;
+        text-align: center;
+        color: var(--soft);
+      }
+
+      .window-stage.playing .window-empty {
+        display: none;
+      }
+
+      @media (max-width: 720px) {
+        .window-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .window-actions {
+          width: 100%;
+        }
+
+        .window-actions button {
+          flex: 1 1 auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="window-header">
+      <div class="window-copy">
+        <h1 id="title">Player Externo</h1>
+        <p id="subtitle">Criado por Carlos Ramos</p>
+      </div>
+
+      <div class="window-actions">
+        <button id="fullscreenButton" type="button">Ecra cheio</button>
+        <button id="closeButton" type="button">Fechar</button>
+      </div>
+    </header>
+
+    <main id="stage" class="window-stage">
+      <video id="video" controls playsinline autoplay></video>
+      <div class="window-empty">
+        <p>O stream sera reproduzido aqui.</p>
+      </div>
+    </main>
+  </body>
+</html>

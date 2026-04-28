@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Streaming Hub | Carlos Ramos</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.19/dist/hls.min.js" defer></script>
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-b"></div>
+    <div class="ambient ambient-c"></div>
+    <div id="toastRoot" class="toast-root" aria-live="polite"></div>
+
+    <main class="shell">
+      <section id="loginScreen" class="login-screen">
+        <div class="login-card">
+          <div class="brand-lockup">
+            <span class="eyebrow">IPTV . VOD . Series</span>
+            <h1>Streaming Hub</h1>
+            <p>
+              Liga o teu provider com `host`, `username` e `password` para
+              aceder ao teu catalogo de canais, filmes e series.
+            </p>
+            <div class="signature-badge">
+              <span class="mini-label">Criado por</span>
+              <strong>Carlos Ramos</strong>
+            </div>
+          </div>
+
+          <form id="loginForm" class="login-form">
+            <label>
+              <span>Host</span>
+              <input
+                id="hostInput"
+                name="host"
+                type="text"
+                placeholder="http://teu-provider.com:8080 ou link get.php"
+                autocomplete="url"
+                required
+              />
+            </label>
+            <p class="field-hint">
+              Podes colar o host base ou ate o link completo da lista, por exemplo `get.php?...`.
+            </p>
+
+            <div class="field-row">
+              <label>
+                <span>Username</span>
+                <input
+                  id="usernameInput"
+                  name="username"
+                  type="text"
+                  placeholder="utilizador"
+                  autocomplete="username"
+                  required
+                />
+              </label>
+
+              <label>
+                <span>Password</span>
+                <input
+                  id="passwordInput"
+                  name="password"
+                  type="password"
+                  placeholder="password"
+                  autocomplete="current-password"
+                  required
+                />
+              </label>
+            </div>
+
+            <label class="remember-line">
+              <input id="rememberInput" type="checkbox" checked />
+              <span>Guardar ligacao neste browser</span>
+            </label>
+
+            <button id="loginButton" class="primary-button tv-focusable" type="submit">
+              Entrar no catalogo
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <section id="appScreen" class="workspace hidden">
+        <aside class="sidebar">
+          <div class="sidebar-top">
+            <div class="brand-compact">
+              <span class="brand-mark">SH</span>
+              <div>
+                <strong>Streaming Hub</strong>
+                <p class="muted-line">Criado por Carlos Ramos</p>
+              </div>
+            </div>
+
+            <nav class="nav-stack" id="navStack">
+              <button class="nav-button tv-focusable active" data-nav="dashboard">Inicio</button>
+              <button class="nav-button tv-focusable" data-nav="live">Live TV</button>
+              <button class="nav-button tv-focusable" data-nav="vod">Filmes</button>
+              <button class="nav-button tv-focusable" data-nav="series">Series</button>
+              <button class="nav-button tv-focusable" data-nav="favorites">Favoritos</button>
+            </nav>
+          </div>
+
+          <div class="sidebar-bottom">
+            <div id="appearanceSwitch" class="appearance-panel">
+              <span class="mini-label">Aspeto</span>
+              <div class="appearance-switch">
+                <button class="appearance-chip tv-focusable active" data-ui-mode="app" type="button">
+                  App
+                </button>
+                <button class="appearance-chip tv-focusable" data-ui-mode="browser" type="button">
+                  Browser
+                </button>
+              </div>
+            </div>
+
+            <div class="creator-card">
+              <span class="mini-label">Criador</span>
+              <strong>Carlos Ramos</strong>
+            </div>
+            <button id="logoutButton" class="ghost-button tv-focusable" type="button">
+              Terminar sessao
+            </button>
+          </div>
+        </aside>
+
+        <section class="content">
+          <header class="topbar">
+            <div>
+              <span id="viewEyebrow" class="eyebrow">Inicio</span>
+              <h2 id="viewTitle">A tua biblioteca</h2>
+            </div>
+
+            <div class="toolbar">
+              <label class="search-shell">
+                <input
+                  id="searchInput"
+                  type="search"
+                  placeholder="Pesquisar por nome"
+                />
+              </label>
+
+              <div class="sort-rack" aria-label="Ordenacao">
+                <span class="sort-label">Ordenar</span>
+                <div class="sort-chip-group">
+                  <button class="sort-option tv-focusable active" data-sort-option="featured" type="button">
+                    Em destaque
+                  </button>
+                  <button class="sort-option tv-focusable" data-sort-option="az" type="button">
+                    A-Z
+                  </button>
+                  <button class="sort-option tv-focusable" data-sort-option="recent" type="button">
+                    Mais recentes
+                  </button>
+                  <button class="sort-option tv-focusable" data-sort-option="rating" type="button">
+                    Rating
+                  </button>
+                </div>
+                <select id="sortSelect" class="sort-select hidden" aria-hidden="true" tabindex="-1">
+                  <option value="featured">Em destaque</option>
+                  <option value="az">A-Z</option>
+                  <option value="recent">Mais recentes</option>
+                  <option value="rating">Melhor rating</option>
+                </select>
+              </div>
+            </div>
+          </header>
+
+          <section id="heroArea" class="hero-area"></section>
+          <section id="filterBar" class="filter-bar"></section>
+          <section id="contentArea" class="content-area"></section>
+        </section>
+
+        <aside id="playerPane" class="player-pane">
+          <div class="player-header">
+            <div>
+              <span class="eyebrow">Player</span>
+              <h3 id="playerTitle">Seleciona um canal ou titulo</h3>
+            </div>
+            <div class="player-header-actions">
+              <button
+                id="popoutButton"
+                class="ghost-icon-button tv-focusable"
+                data-player-popout="active"
+                type="button"
+              >
+                Destacar
+              </button>
+              <button id="fullscreenButton" class="ghost-icon-button tv-focusable" type="button">
+                Ecra cheio
+              </button>
+            </div>
+          </div>
+
+          <div id="playerToolbar" class="player-toolbar">
+            <div class="player-nav-actions">
+              <button id="prevButton" class="ghost-icon-button tv-focusable" data-player-step="-1" type="button">
+                Anterior
+              </button>
+              <button id="nextButton" class="ghost-icon-button tv-focusable" data-player-step="1" type="button">
+                Seguinte
+              </button>
+            </div>
+
+            <div class="player-layout-switch">
+              <button class="chip-button tv-focusable active" data-player-layout="1" type="button">1 ecra</button>
+              <button class="chip-button tv-focusable" data-player-layout="2" type="button">2 ecras</button>
+              <button class="chip-button tv-focusable" data-player-layout="4" type="button">4 ecras</button>
+            </div>
+          </div>
+
+          <div id="playerStage" class="player-stage layout-1">
+            <article class="video-shell player-slot active tv-focusable" data-player-slot="0" tabindex="0" role="button">
+              <div class="slot-head">
+                <span class="slot-label">Ecra 1</span>
+                <span class="slot-state" data-slot-state="0">Vazio</span>
+              </div>
+              <video id="mediaPlayer0" data-player-video="0" playsinline></video>
+              <div class="player-empty" data-slot-empty="0">
+                <p>Escolhe algo para reproduzir neste ecra.</p>
+              </div>
+            </article>
+
+            <article class="video-shell player-slot tv-focusable" data-player-slot="1" tabindex="0" role="button">
+              <div class="slot-head">
+                <span class="slot-label">Ecra 2</span>
+                <span class="slot-state" data-slot-state="1">Vazio</span>
+              </div>
+              <video id="mediaPlayer1" data-player-video="1" playsinline muted></video>
+              <div class="player-empty" data-slot-empty="1">
+                <p>Seleciona este ecra e abre outro canal, filme ou episodio.</p>
+              </div>
+            </article>
+
+            <article class="video-shell player-slot tv-focusable" data-player-slot="2" tabindex="0" role="button">
+              <div class="slot-head">
+                <span class="slot-label">Ecra 3</span>
+                <span class="slot-state" data-slot-state="2">Vazio</span>
+              </div>
+              <video id="mediaPlayer2" data-player-video="2" playsinline muted></video>
+              <div class="player-empty" data-slot-empty="2">
+                <p>Seleciona este ecra para juntares mais um stream.</p>
+              </div>
+            </article>
+
+            <article class="video-shell player-slot tv-focusable" data-player-slot="3" tabindex="0" role="button">
+              <div class="slot-head">
+                <span class="slot-label">Ecra 4</span>
+                <span class="slot-state" data-slot-state="3">Vazio</span>
+              </div>
+              <video id="mediaPlayer3" data-player-video="3" playsinline muted></video>
+              <div class="player-empty" data-slot-empty="3">
+                <p>Seleciona este ecra para completares o mosaico.</p>
+              </div>
+            </article>
+          </div>
+
+          <div id="playerMeta" class="player-meta"></div>
+          <div id="playerDetails" class="player-details"></div>
+        </aside>
+      </section>
+    </main>
+  </body>
+</html>

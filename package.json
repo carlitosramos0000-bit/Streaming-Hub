@@ -1,0 +1,9 @@
+{
+  "name": "streaming-hub",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aplicacao IPTV/VOD estilo player com login Xtream via host, username e password.",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
